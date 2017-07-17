@@ -48,7 +48,6 @@ class MyDB {
         unset($this->err);
     }
     
-    //------------------------------------------------------------------------
     // запросить все департаменты.
     function departments () {
         return $this->query("SELECT * FROM `Department`");
@@ -67,25 +66,12 @@ class MyDB {
             WHERE `id` = '$id'
         ");
     } 
-    
-    //запросить всех кандидатов.
-    function employees() {
-        return $this->query("SELECT * FROM `Employee`");
-    }
-
-    //добавить претендента
-    function add_employee($firstName, $lastName, $dep_id) {
-        $this->query("
-            INSERT INTO `Employee` (`firstName`, `lastName`, `departmentId`)
-            VALUES ('$firstName', '$lastName', '$dep_id')
-        ");
-    }
-    
-    function del_employee($id) {
-        $this->query("
-            DELETE FROM `Employee`
-            WHERE `id` = '$id'
-        ");
-    }
+}
+// вставка отзыва в базу данных. 
+function add_post($db, $date, $name, $text, $ip) {
+    $db->query("
+        INSERT INTO `posts` (`date`, `name`, `text`, `number_of_likes`, `IP`)
+        VALUES ($date, $name, $text, 0, $ip);
+    ");
 }
 ?>
