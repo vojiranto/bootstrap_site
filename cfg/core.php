@@ -21,9 +21,9 @@ class MyDB {
         // получение ссылки.
         $this->link = mysqli_connect(
             "localhost",
-            "root",
-            "090494a",
-            "my_site"
+            "al",
+            "aL_pass0",
+            "b_site"
         );
 
         // установка кодировки.
@@ -47,19 +47,12 @@ class MyDB {
         unset($this->fetch);
         unset($this->err);
     }
-    
-    // запросить все департаменты.
-    function departments () {
-        return $this->query("SELECT * FROM `Department`");
+    // извлекаем все посты из базы.
+    function posts () {
+        return $this->query("SELECT * FROM `posts`");
     }
-    
-    function del_department($id) {
-        $this->query("
-            DELETE FROM `Department`
-            WHERE `id` = '$id'
-        ");
-    } 
 }
+
 // вставка отзыва в базу данных. 
 // TODO Добавить проверку на HTML
 function add_post($db, $date, $name, $text, $ip) {
@@ -67,11 +60,6 @@ function add_post($db, $date, $name, $text, $ip) {
         INSERT INTO `posts` (`date`, `name`, `text`, `number_of_likes`, `IP`)
         VALUES ($date, $name, $text, 0, $ip);
     ");
-}
-
-
-function posts ($db) {
-    return $db->query("SELECT * FROM `posts`");
 }
 
 ?>

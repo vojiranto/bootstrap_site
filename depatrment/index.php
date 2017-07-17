@@ -14,11 +14,7 @@
     if (isset($_GET["name"])) {
         $db->add_department($_GET["name"]);
     }
-    
-    // удаление из базы данных
-    if (isset($_GET["del"])) {
-        $db->del_department($_GET["del"]);
-    }
+
     
     include (SERV_DIR."/depatrment/template.php");
     $db->close();

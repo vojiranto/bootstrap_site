@@ -6,6 +6,24 @@ function del_linc($id){
     return "<a href='?del=$id'>удалить</a>";
 }
 
+// Напечатать список всех постов
+function posts_list($db){
+    // Выдёргиваем списоr постов.
+    $res = $db->posts();
+    $str = "";
+    while ($row = mysqli_fetch_array($res)) {
+        $row_name = $row['name'];
+        $row_text = $row['text'];
+        $str = "$str
+            <br>$row_name: $row_text";
+    }
+
+    if ($str === "") {
+        $str = "Здесь пока пусто, добавьте департамент в список";
+    }
+    return $str;
+}
+
 // Напечатать список всех департаментов
 function departments_list($db){
     // Выдёргиваем списоr департаментов.
