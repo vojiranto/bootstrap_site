@@ -113,4 +113,26 @@ class MyDB {
     }
 }
 
+//сравниваем по датам.
+function cmp_dates($a, $b){
+    if ($a['date'] > $b['date']) {
+        return 1;
+    } elseif ($a['date'] === $b['date']) {
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+// сравниваем по лайкам
+function cmp_likes($a, $b){
+    if ($a['number_of_likes'] > $b['number_of_likes']){
+        return 1;
+    } elseif ($a['number_of_likes'] === $b['number_of_likes']){
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
 ?>
