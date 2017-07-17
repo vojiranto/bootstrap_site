@@ -61,12 +61,14 @@ class MyDB {
     } 
 }
 // вставка отзыва в базу данных. 
+// TODO Добавить проверку на HTML
 function add_post($db, $date, $name, $text, $ip) {
     $db->query("
         INSERT INTO `posts` (`date`, `name`, `text`, `number_of_likes`, `IP`)
         VALUES ($date, $name, $text, 0, $ip);
     ");
 }
+
 
 function posts ($db) {
     return $db->query("SELECT * FROM `posts`")
