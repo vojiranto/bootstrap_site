@@ -57,8 +57,16 @@ class MyDB {
         $this->query("CREATE TABLE $ip (id int)");
     }
     
+    // возвращает true, если таблица существует
+    function user_exist(){
+        $ip = $_SERVER['REMOTE_ADDR'];
+        return "" !== $this->query(
+            "SHOW TABLES LIKE \"$ip\""
+        );
+    }
+    
     // проверка того, ставили ли лайк с этого ip.
-    function exists($id){
+    function like_exist($id){
         $ip = $_SERVER['REMOTE_ADDR'];
         return (bool)mysql_num_rows(
             $this->query("
@@ -68,12 +76,29 @@ class MyDB {
             ")
         );
     }
-/*
-    function add_like_to_user($id) {
+
+    function add_like_to_post($id) {
         $ip    = $_SERVER['REMOTE_ADDR'];
-         
+        
+        if (!$this->user_exist()){
+            $this->add_user();
+        }
+        
+        if (!$this->like_exist()){
+            // запомнить, что лайк добавлен
+            $this->query("
+                INSERT INTO `$ip` (`id`)
+                VALUES ('$id')
+            ");
+            // увеличить колво лайков поста на один
+            $this->query("
+                UPDATE posts
+                SET number_of_likes = number_of_likes + 1
+                WHERE id = '$id'
+            ")
+        }
     }
-*/
+
     function add_post($name, $text) {
         $date = date('Y-m-d H:i:s');
         $ip   = $_SERVER['REMOTE_ADDR'];
