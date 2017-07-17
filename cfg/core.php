@@ -52,14 +52,18 @@ class MyDB {
         return $this->query("SELECT * FROM `posts`");
     }
 
-    // вставка отзыва в базу данных. 
-    // TODO Добавить проверку на HTML
-    function add_post($date, $name, $text, $ip) {
-    $this->query("
-        INSERT INTO `posts` (`date`, `name`, `text`, `number_of_likes`, `IP`)
-        VALUES ($date, $name, $text, 0, $ip);
-    ");
-}
+    function add_post($name, $text) {
+        $date = date('Y-m-d H:i:s');
+        $ip   = $_SERVER['REMOTE_ADDR'];
+        // проверка на наличие HTML разметки.
+        if (strip_tags($text) === $text) {
+            $text = nl2br($text);
+            $this->query("
+                INSERT INTO `posts` (`date`, `name`, `text`, `number_of_likes`, `IP`)
+                VALUES ($date, $name, $text, 0, $ip);
+            ");
+        }
+    }
 }
 
 ?>

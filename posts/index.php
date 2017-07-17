@@ -16,7 +16,7 @@
     }
 
     
-    include (SERV_DIR."/depatrment/template.php");
+    include (SERV_DIR."/posts/template.php");
     $db->close();
 ?>
 
