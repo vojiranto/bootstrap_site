@@ -51,15 +51,15 @@ class MyDB {
     function posts () {
         return $this->query("SELECT * FROM `posts`");
     }
-}
 
-// вставка отзыва в базу данных. 
-// TODO Добавить проверку на HTML
-function add_post($db, $date, $name, $text, $ip) {
-    $db->query("
+    // вставка отзыва в базу данных. 
+    // TODO Добавить проверку на HTML
+    function add_post($date, $name, $text, $ip) {
+    $this->query("
         INSERT INTO `posts` (`date`, `name`, `text`, `number_of_likes`, `IP`)
         VALUES ($date, $name, $text, 0, $ip);
     ");
+}
 }
 
 ?>
