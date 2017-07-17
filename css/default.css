@@ -1,0 +1,23 @@
+div.section {
+    float:left;
+}
+
+div.menu, div.content {
+    border: 1px solid #BBB; 
+    border-radius: 5px; 
+    margin: 1em 1em 1em 1em;
+    padding: 1em 1em 1em 1em;
+}
+
+/*заголовок*/
+div.menu p {
+    font-size: 20px;
+    margin: 0 0 0 0;
+}
+
+/*ссылки для переходов*/
+div.menu a {
+    text-decoration: none;
+    display: block;
+}
+

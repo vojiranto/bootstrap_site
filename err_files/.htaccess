@@ -1,0 +1,8 @@
+<VirtualHost *:80>
+  ServerAlias mysite.zz www.mysite.zz
+  DocumentRoot /home/al/server/mysite.zz
+  <Directory home/al/server/mysite.zz/>
+    AllowOverride All
+    Require all granted
+  </Directory>
+</VirtualHost>
