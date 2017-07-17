@@ -71,7 +71,7 @@ function add_post($db, $date, $name, $text, $ip) {
 
 
 function posts ($db) {
-    return $db->query("SELECT * FROM `posts`")
+    return $db->query("SELECT * FROM `posts`");
 }
 
 ?>
