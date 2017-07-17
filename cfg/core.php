@@ -53,13 +53,6 @@ class MyDB {
         return $this->query("SELECT * FROM `Department`");
     }
     
-    function add_department($name) {
-        $this->query("
-            INSERT INTO `Department` (`name`)
-            VALUES ('$name')
-        ");
-    }
-    
     function del_department($id) {
         $this->query("
             DELETE FROM `Department`
@@ -74,4 +67,9 @@ function add_post($db, $date, $name, $text, $ip) {
         VALUES ($date, $name, $text, 0, $ip);
     ");
 }
+
+function posts ($db) {
+    return $db->query("SELECT * FROM `posts`")
+}
+
 ?>
