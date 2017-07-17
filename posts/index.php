@@ -11,11 +11,10 @@
     $db->connect();
 
     // вставка в базу данных
-    if (isset($_GET["name"])) {
-        $db->add_department($_GET["name"]);
+    if (isset($_GET["name"]) and (isset($_GET["text"]))) {
+        $db->add_post($_GET["name"], $_GET["text"]);
     }
 
-    
     include (SERV_DIR."/posts/template.php");
     $db->close();
 ?>

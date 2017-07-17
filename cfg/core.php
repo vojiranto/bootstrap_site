@@ -52,6 +52,28 @@ class MyDB {
         return $this->query("SELECT * FROM `posts`");
     }
 
+    function add_user() {
+        $ip   = $_SERVER['REMOTE_ADDR'];
+        $this->query("CREATE TABLE $ip (id int)");
+    }
+    
+    // проверка того, ставили ли лайк с этого ip.
+    function exists($id){
+        $ip = $_SERVER['REMOTE_ADDR'];
+        return (bool)mysql_num_rows(
+            $this->query("
+                SELECT 1 FROM `$ip`
+                WHERE `id` = $id
+                LIMIT 1 
+            ")
+        );
+    }
+/*
+    function add_like_to_user($id) {
+        $ip    = $_SERVER['REMOTE_ADDR'];
+         
+    }
+*/
     function add_post($name, $text) {
         $date = date('Y-m-d H:i:s');
         $ip   = $_SERVER['REMOTE_ADDR'];
@@ -60,7 +82,7 @@ class MyDB {
             $text = nl2br($text);
             $this->query("
                 INSERT INTO `posts` (`date`, `name`, `text`, `number_of_likes`, `IP`)
-                VALUES ($date, $name, $text, 0, $ip);
+                VALUES ('$date', '$name', '$text', '0', '$ip');
             ");
         }
     }
