@@ -6,16 +6,55 @@ function del_linc($id){
     return "<a href='?del=$id'>удалить</a>";
 }
 
+function button ($onclick, $txt) {
+    return "
+    <button type=\"button\" class=\"btn btn-default\" onclick=\"$onclick\">$txt</button>
+";
+}
+
+function href_button($href, $txt) {
+    return button("window.location.href='$href'", $txt);
+}
+
+function add_like_button ($id, $txt) {
+    return href_button("/posts/?id=$id", $txt);
+}
+
 // Напечатать список всех постов
+
+function print_post($post){
+    $name = $post['name'];
+    $text = $post['text'];
+    $date = $post['date'];
+    return "
+    Автор отзыва: $name.<br>
+    $text<br><hr>
+    $date
+";
+}
+
 function posts_list($db){
+
     // Выдёргиваем списоr постов.
-    $res = $db->posts();
     $str = "";
-    while ($row = mysqli_fetch_array($res)) {
-        $row_name = $row['name'];
-        $row_text = $row['text'];
-        $str = "$str
-            <br>$row_name: $row_text";
+    $posts = to_arr($db->posts());
+
+    // настройка порядка вывода сообщений.
+    if (isset($_GET["rds"])) {
+        uasort($posts, 'cmp_rdates');
+    } elseif (isset($_GET["ls"])) {
+        uasort($posts, 'cmp_rlikes');
+    } elseif (isset($_GET["rls"])) {
+        uasort($posts, 'cmp_likes');
+    }
+
+    foreach ($posts as $post) {
+        $id = $post['id'];
+        $str  = $str.div_class("jumbotron",
+            print_post($post)."<br>".
+            add_like_button($id, $post['number_of_likes']." лайков").
+                href_button("/post/?id=$id","Просмотреть это сообщение подробнее")
+            );
     }
 
     if ($str === "") {
@@ -24,42 +63,6 @@ function posts_list($db){
     return $str;
 }
 
-// Напечатать список всех департаментов
-function departments_list($db){
-    // Выдёргиваем списоr департаментов.
-    $res = $db->departments();
-    $str = "";
-    while ($row = mysqli_fetch_array($res)) {
-        $row_name = $row['name'];
-        $str = $str."
-            <br>$row_name ".del_linc($row['id']);
-    }
-
-    if ($str === "") {
-        $str = "Здесь пока пусто, добавьте департамент в список";
-    }
-
-    return $str;
-}
-
-function employee_list($db){
-    // Выдёргиваем списоr департаментов.
-    $res = $db->employees();
-    $str = "";
-    while ($row = mysqli_fetch_array($res)) {
-        $firstName  = $row['firstName'];
-        $row_name   = $row['lastName'];
-        $row_dep_id = $row['departmentId'];
-        $str = "$str
-            <br>$firstName $row_name, $row_dep_id ".del_linc($row['id']);
-    }
-
-    if ($str === "") {
-        $str = "Здесь пока пусто, добавьте кандидата в список";
-    }
-
-    return $str;
-}
 
 //Создаём однотипные фрагменты html кода
 
@@ -86,6 +89,7 @@ function form () {
     return $res;
 }
 
+/*
 function head($title) {
     return "
     <head>
@@ -95,34 +99,90 @@ function head($title) {
     </head>
 ";
 }
+*/
+
+function textarea () {
+    return div_class("form-group",
+        "<textarea class=\"form-control\" rows=\"5\" id=\"comment\"></textarea>"
+    );
+}
+
+function head($title) {
+    $bootstrap = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7";
+    $ajax      = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1";
+    return "
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <link rel=\"stylesheet\" href=\"$bootstrap/css/bootstrap.min.css\">
+    <script src=\"$ajax/jquery.min.js\"></script>
+    <script src=\"$bootstrap/js/bootstrap.min.js\"></script>
+</head>
+";}
 
 //создаём боковое меню.
 function menu () {
-    return "
-    <div class=\"menu\">
-        <p>Меню</p>
+    return col("sm-4",
+        p("Меню")."
         <a href=\"/employee\">Employee</a>
-        <a href=\"/depatrment\">Depatrment</a>
-    </div>";
+        <a href=\"/depatrment\">Depatrment</a>"
+    );
+}
+
+function div_class($class, $cont){
+    return "<div class=\"$class\">$cont</div>";
+}
+
+function container ($cont) {
+    return div_class ("container", $cont);
+}
+
+function row ($cont) {
+    return div_class("row", $cont);
+}
+
+function col ($sm, $cont){
+    return div_class("col-$sm", $cont);
 }
 
 function section ($cont) {
-    return "
-    <div class=\"section\">
-        $cont
-    </div>
-    ";
+    return div_class("section", $cont);
 }
 
 function content ($cont) {
-    return "
-    <div class=\"content\">
-        $cont
-    </div>    
-";
+    return div_class("content", $cont);
+}
+
+function h($i, $cont){
+    return "<h$i>$cont</h$i>";
 }
 
 function h1 ($cont) {
-    return "<h1>$cont</h1>";
+    return h(1, $cont);
 }
+
+function h2 ($cont) {
+    return h(2, $cont);
+}
+
+function h3 ($cont) {
+    return h(3, $cont);
+}
+
+function h4 ($cont) {
+    return h(4, $cont);
+}
+
+function h5 ($cont) {
+    return h(5, $cont);
+}
+
+function h6 ($cont) {
+    return h(6, $cont);
+}
+
+function p ($cont) {return tag ("p", $cont);}
+function tag ($tag, $cont) {return "<$tag>$cont</$tag>";}
+
 ?>

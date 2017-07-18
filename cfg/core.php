@@ -27,7 +27,10 @@ class MyDB {
         );
 
         // установка кодировки.
-        $this->query('SET NAMES utf8');
+        $this->query("
+        SET NAMES 'utf8';
+        SET CHARACTER SET utf8;
+        ");
     }
 
     // Закрыть доступ к базе данных
@@ -52,50 +55,39 @@ class MyDB {
         return $this->query("SELECT * FROM `posts`");
     }
 
-    function add_user() {
-        $ip   = $_SERVER['REMOTE_ADDR'];
-        $this->query("CREATE TABLE $ip (id int)");
-    }
-    
-    // возвращает true, если таблица существует
-    function user_exist(){
-        $ip = $_SERVER['REMOTE_ADDR'];
-        return "" !== $this->query(
-            "SHOW TABLES LIKE \"$ip\""
-        );
-    }
     
     // проверка того, ставили ли лайк с этого ip.
     function like_exist($id){
-        $ip = $_SERVER['REMOTE_ADDR'];
-        return (bool)mysql_num_rows(
-            $this->query("
-                SELECT 1 FROM `$ip`
-                WHERE `id` = $id
-                LIMIT 1 
-            ")
-        );
+        $ip = get_ip();
+        $check_query = $this->query("
+                SELECT * FROM likes
+                WHERE id = '$id' AND ip = '$ip' 
+            ");
+        return mysqli_fetch_array($check_query);
+    }
+
+    function select_post($id) {
+        return $this->query("
+            SELECT * FROM `posts`
+            WHERE id = '$id'
+        ");
     }
 
     function add_like_to_post($id) {
-        $ip    = $_SERVER['REMOTE_ADDR'];
+        $ip = get_ip();
         
-        if (!$this->user_exist()){
-            $this->add_user();
-        }
-        
-        if (!$this->like_exist()){
+        if (! $this->like_exist($id)){
             // запомнить, что лайк добавлен
             $this->query("
-                INSERT INTO `$ip` (`id`)
-                VALUES ('$id')
+                INSERT INTO likes (`id`,`ip`)
+                VALUES ('$id', '$ip')
             ");
             // увеличить колво лайков поста на один
             $this->query("
                 UPDATE posts
                 SET number_of_likes = number_of_likes + 1
                 WHERE id = '$id'
-            ")
+            ");
         }
     }
 
@@ -107,11 +99,37 @@ class MyDB {
             $text = nl2br($text);
             $this->query("
                 INSERT INTO `posts` (`date`, `name`, `text`, `number_of_likes`, `IP`)
-                VALUES ('$date', '$name', '$text', '0', '$ip');
+                VALUES ('$date', '$name', '$text', '0', '$ip')
             ");
         }
     }
 }
+
+
+function ip_to_name ($ip) {
+    return "ip".str_replace(".", "_", $ip);
+}
+
+function get_ip(){
+    return ip_to_name($_SERVER['REMOTE_ADDR']);
+}
+
+function post_date_sort($arr) {
+    return uasort($arr, 'cmp_dates');
+}
+
+function post_date_rsort($arr) {
+    return uasort($arr, 'cmp_rdates');
+}
+
+function post_like_sort($arr) {
+    return uasort($arr, 'cmp_likes');
+}
+
+function post_like_rsort($arr) {
+    return uasort($arr, 'cmp_rlikes');
+}
+
 
 //сравниваем по датам.
 function cmp_dates($a, $b){
@@ -124,6 +142,10 @@ function cmp_dates($a, $b){
     }
 }
 
+function cmp_rdates($a, $b) {
+    return cmp_dates($b, $a);
+}
+
 // сравниваем по лайкам
 function cmp_likes($a, $b){
     if ($a['number_of_likes'] > $b['number_of_likes']){
@@ -133,6 +155,19 @@ function cmp_likes($a, $b){
     } else {
         return -1;
     }
+}
+
+function cmp_rlikes ($a, $b) {
+    return  cmp_likes($b, $a);
+}
+
+//перекинуть в массив
+function to_arr($res) {
+    $arr = [];
+    while ($row = mysqli_fetch_array($res)) {
+        $arr[] = $row;  
+    }
+    return $arr;
 }
 
 ?>

@@ -10,9 +10,8 @@
     $db = new MyDB();
     $db->connect();
 
-    // вставка в базу данных
-    if (isset($_GET["name"]) and (isset($_GET["text"]))) {
-        $db->add_post($_GET["name"], $_GET["text"]);
+    if (isset($_GET["id"])) {
+        $db->add_like_to_post($_GET["id"]);
     }
 
     include (SERV_DIR."/posts/template.php");
