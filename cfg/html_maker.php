@@ -27,7 +27,7 @@ function print_post($post){
     $text = $post['text'];
     $date = $post['date'];
     return "
-    Автор отзыва: $name.<br>
+    Автор отзыва: $name.<hr>
     $text<br><hr>
     $date
 ";
